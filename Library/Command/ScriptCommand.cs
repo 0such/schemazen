@@ -11,8 +11,10 @@ public class ScriptCommand : BaseCommand {
 		Dictionary<string, string> namesAndSchemas,
 		string dataTablesPattern,
 		string dataTablesExcludePattern,
-		string tableHint,
-		List<string> filteredTypes) {
+		string tableHint,		
+		List<string> filteredTypes,
+		List<string> filteredTables,
+		List<string> filteredRoutines) {
 		if (!Overwrite && Directory.Exists(ScriptDir)) {
 			var message = $"{ScriptDir} already exists - you must set overwrite to true";
 			throw new InvalidOperationException(message);
@@ -21,7 +23,7 @@ public class ScriptCommand : BaseCommand {
 		var db = CreateDatabase(filteredTypes);
 
 		Logger.Log(TraceLevel.Verbose, "Loading database schema...");
-		db.Load();
+		db.Load(filteredTables, filteredRoutines, DisableRoles);
 		Logger.Log(TraceLevel.Verbose, "Database schema loaded.");
 
 		foreach (var nameAndSchema in namesAndSchemas)

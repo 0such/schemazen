@@ -68,3 +68,14 @@ Pull requests are welcome and appreciated. See [contributing.md](contributing.md
 If you've found Schema Zen helpful you can
 [buy me a coffee](https://www.buymeacoffee.com/sethreno) to say thanks.
 Cheers!
+
+----
+## Fork changes
+This fork of [sethreno's](https://github.com/sethreno/schemazen) Schema Zen project allows you to to filter table types and routine types. It's important to include all names with the schema names.
+```
+schemazen script --server localhost --database db --scriptDir c:\somedir --tableList dbo.Users,dbo.Orders --routineList sch.GetOrders,dbo.CreateProduct
+```
+You can also skip reading users, logins, synonyms, roles and permissions from database to improve performance with some bigger databases.
+```
+schemazen script --server localhost --database db --scriptDir c:\somedir -r
+```

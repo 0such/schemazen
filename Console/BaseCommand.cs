@@ -27,6 +27,10 @@ public abstract class BaseCommand : ConsoleCommand {
 			"Enable verbose log messages.",
 			o => Verbose = o != null);
 		HasOption(
+			"r|disableRoles",
+			"Disable reading users and roles from database.",
+			o => DisableRoles = o != null);
+		HasOption(
 			"f|databaseFilesPath=",
 			"Path to database data and log files.",
 			o => DatabaseFilesPath = o);
@@ -40,5 +44,6 @@ public abstract class BaseCommand : ConsoleCommand {
 	protected string ScriptDir { get; set; }
 	protected bool Overwrite { get; set; }
 	protected bool Verbose { get; set; }
+	protected bool DisableRoles { get; set; }
 	protected string DatabaseFilesPath { get; set; }
 }

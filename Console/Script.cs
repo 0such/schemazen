@@ -43,7 +43,16 @@ public class Script : BaseCommand {
 			"A comma separated list of the types that will only be scripted. Valid types: " +
 			Database.ValidTypes,
 			o => OnlyTypes = o);
-	}
+		HasOption(
+			"routineList=",
+			"A comma separated list of the database routines that will only be scripted.",
+			o => RoutineList = o);
+		HasOption(
+			"tableList=",
+			"A comma separated list of the database tables that will only be scripted.",
+			o => TableList = o);
+			}
+
 
 	protected string DataTables { get; set; }
 	protected string FilterTypes { get; set; }
@@ -51,6 +60,8 @@ public class Script : BaseCommand {
 	protected string DataTablesPattern { get; set; }
 	protected string DataTablesExcludePattern { get; set; }
 	protected string TableHint { get; set; }
+	protected string TableList { get; set; }
+	protected string RoutineList { get; set; }
 
 	public override int Run(string[] args) {
 		_logger = new Logger(Verbose);
@@ -70,11 +81,14 @@ public class Script : BaseCommand {
 			Server = Server,
 			User = User,
 			Logger = _logger,
-			Overwrite = Overwrite
+			Overwrite = Overwrite,
+			DisableRoles = this.DisableRoles
 		};
 
 		var filteredTypes = HandleFilteredTypes();
 		var namesAndSchemas = HandleDataTables(DataTables);
+		var filteredTables = HandleObjectList(TableList);
+		var filteredRoutines = HandleObjectList(RoutineList);
 
 		try {
 			scriptCommand.Execute(
@@ -82,7 +96,10 @@ public class Script : BaseCommand {
 				DataTablesPattern,
 				DataTablesExcludePattern,
 				TableHint,
-				filteredTypes);
+				filteredTypes,
+				filteredTables,
+				filteredRoutines
+				);
 		} catch (Exception ex) {
 			throw new ConsoleHelpAsException(ex.Message);
 		}
@@ -102,6 +119,13 @@ public class Script : BaseCommand {
 		}
 
 		return Database.Dirs.Except(keepTypes.Except(removeTypes)).ToList();
+	}
+
+	private List<string> HandleObjectList(string stringList)
+	{
+		if (!String.IsNullOrEmpty(stringList))
+			return stringList.Split(",").ToList();
+		return null;
 	}
 
 	private Dictionary<string, string> HandleDataTables(string tableNames) {
